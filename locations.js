@@ -1,4 +1,4 @@
-const SUPABASE_URL = "https://tdttzcghkwksmqenmplw.supabase.co/rest/v1/locations";
+const SUPABASE_URL = "https://tdttzcghkwksmqenmplw.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkdHR6Y2doa3drc21xZW5tcGx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyOTc2MzIsImV4cCI6MjA5NTg3MzYzMn0.LYZO_1u8VZaeVrXxw-CBk-x-SjOFDVFFy6hRn-wKAng";
 
 async function loadLocations() {
