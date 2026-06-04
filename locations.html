@@ -1,28 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>All Locations</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Locations</title>
 </head>
 <body>
 
-<h1>All Locations</h1>
+<h2>All Locations</h2>
 
-<table id="table">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Latitude</th>
-            <th>Longitude</th>
-            <th>Accuracy</th>
-            <th>Time</th>
-        </tr>
-    </thead>
+<table border="1">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Latitude</th>
+      <th>Longitude</th>
+      <th>Accuracy</th>
+    </tr>
+  </thead>
 
-    <tbody></tbody>
+  <tbody id="tbody"></tbody>
 </table>
 
-<script src="locations.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DpkaZUp6vuSvgzi2llF2NsidMGPGdzQ",
+  authDomain: "manan-ccdc7.firebaseapp.com",
+  databaseURL: "https://manan-ccdc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "manan-ccdc7",
+  storageBucket: "manan-ccdc7.firebasestorage.app",
+  messagingSenderId: "266543589423",
+  appId: "1:266543589423:web:9495cf27a96a7163dcfeda",
+  measurementId: "G-3863B3TJ0L"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const snapshot = await getDocs(collection(db, "locations"));
+
+const tbody = document.getElementById("tbody");
+
+snapshot.forEach((doc) => {
+
+  const d = doc.data();
+
+  tbody.innerHTML += `
+    <tr>
+      <td>${d.name}</td>
+      <td>${d.latitude}</td>
+      <td>${d.longitude}</td>
+      <td>${d.accuracy} m</td>
+    </tr>
+  `;
+});
+
+</script>
 
 </body>
 </html>

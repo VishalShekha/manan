@@ -1,22 +1,70 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Send Location</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Send Location</title>
 </head>
 <body>
 
-<h1>Send My Location</h1>
+<h2>Share Location</h2>
 
-<input type="text" id="name" placeholder="Enter your name">
-
-<button onclick="sendLocation()">
-    Send Location
-</button>
+<input id="name" placeholder="Enter your name">
+<button onclick="sendLocation()">Send Location</button>
 
 <p id="status"></p>
 
-<script src="app.js"></script>
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD3DpkaZUp6vuSvgzi2llF2NsidMGPGdzQ",
+  authDomain: "manan-ccdc7.firebaseapp.com",
+  databaseURL: "https://manan-ccdc7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "manan-ccdc7",
+  storageBucket: "manan-ccdc7.firebasestorage.app",
+  messagingSenderId: "266543589423",
+  appId: "1:266543589423:web:9495cf27a96a7163dcfeda",
+  measurementId: "G-3863B3TJ0L"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.sendLocation = function () {
+
+  const name = document.getElementById("name").value.trim();
+
+  if (!name) {
+    alert("Enter your name");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+
+      await addDoc(collection(db, "locations"), {
+        name,
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+        accuracy: pos.coords.accuracy,
+        createdAt: serverTimestamp()
+      });
+
+      document.getElementById("status").innerText =
+        "Location saved successfully";
+    },
+    (err) => alert(err.message),
+    { enableHighAccuracy: true }
+  );
+};
+
+</script>
 
 </body>
 </html>
