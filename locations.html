@@ -1,64 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Locations</title>
+    <title>Locations</title>
+    <meta charset="UTF-8">
 </head>
 <body>
 
-<h2>All Locations</h2>
+<h1>All Shared Locations</h1>
 
-<table border="1">
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Latitude</th>
-      <th>Longitude</th>
-      <th>Accuracy</th>
-    </tr>
-  </thead>
+<div id="locations"></div>
 
-  <tbody id="tbody"></tbody>
-</table>
+<script>
 
-<script type="module">
+fetch("locations.json")
+.then(r => r.json())
+.then(data => {
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  getDocs
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    const container =
+        document.getElementById("locations");
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD3DpkaZUp6vuSvgzi2llF2NsidMGPGdzQ",
-  authDomain: "manan-ccdc7.firebaseapp.com",
-  databaseURL: "https://manan-ccdc7-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "manan-ccdc7",
-  storageBucket: "manan-ccdc7.firebasestorage.app",
-  messagingSenderId: "266543589423",
-  appId: "1:266543589423:web:9495cf27a96a7163dcfeda",
-  measurementId: "G-3863B3TJ0L"
-};
+    data.reverse().forEach(item => {
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+        const div = document.createElement("div");
 
-const snapshot = await getDocs(collection(db, "locations"));
+        div.innerHTML = `
+            <h3>${item.name}</h3>
+            <p>Latitude: ${item.latitude}</p>
+            <p>Longitude: ${item.longitude}</p>
+            <p>${item.time}</p>
+            <hr>
+        `;
 
-const tbody = document.getElementById("tbody");
+        container.appendChild(div);
 
-snapshot.forEach((doc) => {
+    });
 
-  const d = doc.data();
-
-  tbody.innerHTML += `
-    <tr>
-      <td>${d.name}</td>
-      <td>${d.latitude}</td>
-      <td>${d.longitude}</td>
-      <td>${d.accuracy} m</td>
-    </tr>
-  `;
 });
 
 </script>
