@@ -1,0 +1,71 @@
+name: Process Locations
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  update:
+    if: github.event.issue.title == 'Location Submission'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Update locations.json
+        run: |
+          python << 'EOF'
+          import json
+          import os
+
+          body = """${{ github.event.issue.body }}"""
+
+          data = {}
+
+          for line in body.splitlines():
+              if ":" in line:
+                  k,v = line.split(":",1)
+                  data[k.strip()] = v.strip()
+
+          entry = {
+              "name": data.get("Name"),
+              "latitude": data.get("Latitude"),
+              "longitude": data.get("Longitude"),
+              "time": data.get("Time")
+          }
+
+          try:
+              with open("locations.json") as f:
+                  locations = json.load(f)
+          except:
+              locations = []
+
+          locations.append(entry)
+
+          with open("locations.json","w") as f:
+              json.dump(locations,f,indent=2)
+          EOF
+
+      - name: Commit changes
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+
+          git add locations.json
+          git commit -m "Add location" || exit 0
+          git push
+
+      - name: Close issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              state: 'closed'
+            })

@@ -1,65 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Send Location</title>
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
+<title>Share Location</title>
 </head>
 <body>
 
-<h1>Send Your Location</h1>
+<h1>Share Location</h1>
 
-<input type="text" id="name" placeholder="Your Name">
-<br><br>
-
-<button onclick="sendLocation()">
-    Share My Location
-</button>
-
-<p id="status"></p>
+<input id="name" placeholder="Enter your name">
+<button onclick="shareLocation()">Share</button>
 
 <script>
-async function sendLocation() {
+function shareLocation() {
 
-    const name = document.getElementById("name").value;
+  const name = document.getElementById("name").value;
 
-    if (!name) {
-        alert("Enter name");
-        return;
-    }
+  if (!name) {
+    alert("Enter name");
+    return;
+  }
 
-    navigator.geolocation.getCurrentPosition(async (pos) => {
+  navigator.geolocation.getCurrentPosition(pos => {
 
-        const lat = pos.coords.latitude;
-        const lon = pos.coords.longitude;
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
 
-        const payload = {
-            name,
-            latitude: lat,
-            longitude: lon,
-            time: new Date().toISOString()
-        };
+    const body =
+`Name: ${name}
+Latitude: ${lat}
+Longitude: ${lon}
+Time: ${new Date().toISOString()}`;
 
-        const response = await fetch(
-            "https://api.github.com/repos/VishalShekha/manan/dispatches",
-            {
-                method: "POST",
-                body: JSON.stringify({
-                    event_type: "new-location",
-                    client_payload: payload
-                })
-            }
-        );
+    const url =
+      "https://github.com/VishalShekha/manan/issues/new" +
+      "?title=Location+Submission" +
+      "&body=" + encodeURIComponent(body);
 
-        if(response.ok){
-            document.getElementById("status").innerText =
-                "Location sent!";
-        } else {
-            document.getElementById("status").innerText =
-                "Failed.";
-        }
-
-    });
-
+    window.open(url, "_blank");
+  });
 }
 </script>
 
